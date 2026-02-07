@@ -1,0 +1,14 @@
+{
+    "containerApps.deploymentConfigurations": [
+        {
+            "label": "shadowpm-api",
+            "type": "AcrDockerBuildRequest",
+            "dockerfilePath": "api/Dockerfile",
+            "srcPath": "api",
+            "envPath": "api/.env",
+            "resourceGroup": "saturn-hack",
+            "containerApp": "shadowpm-api",
+            "containerRegistry": "saturnhack698ca5"
+        }
+    ]
+}

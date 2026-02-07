@@ -1,0 +1,5 @@
+{
+  "name": "ShadowPM",
+  "description": "An agentic product manager that bridges the gap between engineering, communication, and product strategy by analyzing code commits, work logs, and meeting notes to generate actionable tickets.",
+  "requestFramePermissions": []
+}

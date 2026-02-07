@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="docs/images/image.png" alt="ShadowPM" width="400" />
+  <img src="docs/images/image.png" alt="ShadowPM" width="600" />
 </div>
 
 

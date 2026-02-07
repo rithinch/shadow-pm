@@ -1,3 +1,8 @@
+<div align="center">
+  <img src="docs/images/image.png" alt="ShadowPM" width="400" />
+</div>
+
+
 # ShadowPM
 
 **Agentic PM that turns meeting notes + standups into prioritized GitHub issues, changelogs, and execution.**
@@ -85,3 +90,10 @@ Next steps include deeper Slack ingestion, Shortcut/Linear integrations, and ric
 ## Tagline
 
 **PM-level organization for teams without a PM & a force multiplier for PMs — running quietly in the background, like a shadow.**
+
+---
+
+<div align="center">
+  <img src="docs/images/granola.png" alt="Granola x Google Deepmind Hackathon" width="400" />
+  <p><em>Built as part of the Granola x Google Deepmind Hackathon</em></p>
+</div>

@@ -1,156 +1,199 @@
-# Holly and Morty API
+# Granola Meetings API
 
-API for processing Holly (ElevenLabs) conversation webhooks with clean, maintainable architecture.
+A simple FastAPI application for ingesting and storing Granola meeting webhooks in Azure Cosmos DB.
+
+## Features
+
+- **Health Check Endpoint**: Monitor API health
+- **Granola Webhook**: Receive and store meeting data from Granola
+- **Get All Meetings**: Retrieve all stored meetings
+
+## Endpoints
+
+### 1. Health Check
+```
+GET /health
+```
+Returns the health status of the API.
+
+**Response:**
+```json
+{
+  "status": "healthy",
+  "service": "granola-meetings-api"
+}
+```
+
+### 2. Granola Webhook
+```
+POST /webhook/granola
+```
+Receives meeting data from Granola and saves it to Cosmos DB.
+
+**Request Body Example:**
+```json
+{
+  "attendees": "[{'name': 'Sam Stephenson','email': 'samstephenson@granola.ai'}]",
+  "calendar_event_ID": "demo_meeting_c0248556-254e-4456-906f-444aeaa89ea9",
+  "calendar_event_time": "2026-02-07T11:17:43.591Z",
+  "calendar_event_title": "Get started with Granola",
+  "creator_email": "rithin.chalumuri@reewild.com",
+  "creator_name": "Rithin Chalumuri",
+  "enhanced_notes": "...",
+  "id": "ac325660-0cae-4283-8636-d0de9927764e",
+  "link": "https://notes.granola.ai/d/ac325660-0cae-4283-8636-d0de9927764e",
+  "my_notes": "gronola AI",
+  "title": "Get started with Granola",
+  "transcript": "..."
+}
+```
+
+**Response:**
+```json
+{
+  "status": "success",
+  "message": "Meeting data saved successfully",
+  "meeting_id": "ac325660-0cae-4283-8636-d0de9927764e"
+}
+```
+
+### 3. Get All Meetings
+```
+GET /meetings
+```
+Retrieves all meeting documents from Cosmos DB.
+
+**Response:**
+```json
+{
+  "status": "success",
+  "count": 5,
+  "meetings": [
+    {
+      "id": "ac325660-0cae-4283-8636-d0de9927764e",
+      "title": "Get started with Granola",
+      ...
+    }
+  ]
+}
+```
+
+## Setup
+
+### Prerequisites
+- Python 3.8+
+- Azure Cosmos DB account
+
+### Environment Variables
+
+Create a `.env` file in the `api` directory:
+
+```env
+COSMOS_CONNECTION_STRING=your_cosmos_connection_string_here
+COSMOS_DATABASE_NAME=granola-db
+DEBUG=false
+```
+
+## Running the API
+
+### Option 1: Run Locally (Non-Docker)
+
+1. **Install dependencies**
+   ```bash
+   cd api
+   pip install -r requirements.txt
+   ```
+
+2. **Run the development server**
+   ```bash
+   uvicorn main:app --reload
+   ```
+   
+   Or with custom host/port:
+   ```bash
+   uvicorn main:app --reload --host 0.0.0.0 --port 8000
+   ```
+
+3. **Access the API**
+   - API: http://localhost:8000
+   - Interactive docs: http://localhost:8000/docs
+   - Health check: http://localhost:8000/health
+
+### Option 2: Run with Docker
+
+1. **Build the Docker image**
+   ```bash
+   cd api
+   docker build -t granola-meetings-api .
+   ```
+
+2. **Run the container**
+   ```bash
+   docker run -d \
+     --name granola-api \
+     -p 8000:8000 \
+     --env-file .env \
+     granola-meetings-api
+   ```
+   
+   Or run interactively (see logs):
+   ```bash
+   docker run -it \
+     --name granola-api \
+     -p 8000:8000 \
+     --env-file .env \
+     granola-meetings-api
+   ```
+
+3. **Access the API**
+   - API: http://localhost:8000
+   - Interactive docs: http://localhost:8000/docs
+   - Health check: http://localhost:8000/health
+
+4. **Manage the container**
+   ```bash
+   # View logs
+   docker logs granola-api
+   
+   # Stop the container
+   docker stop granola-api
+   
+   # Start the container
+   docker start granola-api
+   
+   # Remove the container
+   docker rm granola-api
+   ```
+
+### Testing the API
+
+Run the test script to verify all endpoints:
+
+```bash
+# Make sure the API is running first
+python test_api.py
+```
+
+## API Documentation
+
+Visit `http://localhost:8000/docs` for interactive API documentation (Swagger UI).
 
 ## Project Structure
 
 ```
 api/
-├── main.py                 # FastAPI application entry point
+├── main.py                 # FastAPI application with endpoints
 ├── core/
-│   └── config.py          # Settings and configuration
-├── models/
-│   └── elevenlabs.py      # Pydantic models for ElevenLabs webhooks
-├── routers/
-│   └── webhooks.py        # Webhook endpoints
+│   ├── config.py          # Configuration settings
+│   └── cosmos.py          # Cosmos DB client
 ├── requirements.txt       # Python dependencies
-├── Dockerfile            # Docker configuration
-├── .env.example          # Environment variables template
-└── README.md            # This file
+└── README.md             # This file
 ```
 
-## Local Development
+## Cosmos DB Setup
 
-### Prerequisites
-- Python 3.11+
-- pip
+The API automatically creates:
+- Database: `granola-db` (configurable via `COSMOS_DATABASE_NAME`)
+- Container: `meetings` with partition key `/id`
 
-### Setup
-
-1. **Clone and navigate to the API directory**
-   ```bash
-   cd api
-   ```
-
-2. **Create a virtual environment (recommended)**
-   ```bash
-   python -m venv venv
-   source venv/bin/activate  # On Windows: venv\Scripts\activate
-   ```
-
-3. **Install dependencies**
-   ```bash
-   pip install -r requirements.txt
-   ```
-
-4. **Configure environment variables**
-   ```bash
-   cp .env.example .env
-   # Edit .env and add your ElevenLabs webhook secret
-   ```
-
-5. **Run the application**
-   ```bash
-   uvicorn main:app --reload
-   ```
-
-The API will be available at `http://localhost:8000`
-
-## Docker
-
-### Build the Docker image
-```bash
-docker build -t holly-and-morty-api .
-```
-
-### Run with environment file
-```bash
-docker run -p 8000:8000 --env-file .env holly-and-morty-api
-```
-
-### Run with environment variables
-```bash
-docker run -p 8000:8000 \
-  -e ELEVENLABS_WEBHOOK_SECRET=your_secret_here \
-  -e COSMOS_CONNECTION_STRING=your_cosmos_connection_string \
-  -e ANTHROPIC_API_KEY=your_anthropic_key \
-  holly-and-morty-api
-```
-
-## Endpoints
-
-### Core Endpoints
-- **GET /** - Root endpoint with API information
-- **GET /health** - Health check endpoint
-- **GET /docs** - Interactive API documentation (Scalar)
-
-### Webhook Endpoints
-- **POST /webhooks/holly-conversation** - ElevenLabs post-call transcription webhook
-
-## Webhook Configuration
-
-### ElevenLabs Setup
-
-1. Get your webhook secret from the [ElevenLabs dashboard](https://elevenlabs.io/app/conversational-ai)
-2. Add it to your `.env` file:
-   ```
-   ELEVENLABS_WEBHOOK_SECRET=your_secret_here
-   ```
-3. Configure the webhook URL in ElevenLabs to point to:
-   ```
-   https://your-domain.com/webhooks/holly-conversation
-   ```
-
-### Webhook Security
-
-The endpoint validates:
-- ✅ Request signature using HMAC-SHA256
-- ✅ Timestamp freshness (within 30 minutes)
-- ✅ Payload structure using Pydantic models
-
-### Testing Webhooks Locally
-
-Use a tool like [ngrok](https://ngrok.com/) to expose your local server:
-
-```bash
-# In one terminal
-uvicorn main:app --reload
-
-# In another terminal
-ngrok http 8000
-```
-
-Then use the ngrok URL in your ElevenLabs webhook configuration.
-
-## Example Requests
-
-### Health Check
-```bash
-curl http://localhost:8000/health
-```
-
-Response:
-```json
-{
-  "status": "healthy",
-  "service": "holly-and-morty-api"
-}
-```
-
-### Test Webhook (with signature)
-The webhook endpoint expects a valid ElevenLabs signature. See the `post_call_transcription` event documentation for the full payload structure.
-
-## Development
-
-### Adding New Endpoints
-
-1. Create a new router in `routers/` directory
-2. Define Pydantic models in `models/` if needed
-3. Include the router in `main.py`
-
-Example:
-```python
-# In main.py
-from routers import your_new_router
-app.include_router(your_new_router.router)
-```
+No manual setup required - containers are created on first run if they don't exist.

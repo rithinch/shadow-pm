@@ -18,7 +18,7 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(
     title=settings.app_name,
-    description="API for processing Granola meeting webhooks",
+    description="ShadowPM API for processing Granola meeting webhooks",
     version=settings.app_version,
     debug=settings.debug,
     lifespan=lifespan
@@ -32,7 +32,7 @@ async def health_check():
         status_code=200,
         content={
             "status": "healthy",
-            "service": "granola-meetings-api"
+            "service": "shadowpm-api"
         }
     )
 

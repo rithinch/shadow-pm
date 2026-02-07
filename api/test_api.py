@@ -1,5 +1,5 @@
 """
-Simple test script for the Granola Meetings API
+Simple test script for the ShadowPM API
 
 This script demonstrates the three endpoints:
 1. Health check
@@ -62,7 +62,7 @@ def test_get_meetings():
 
 if __name__ == "__main__":
     print("=" * 60)
-    print("Granola Meetings API Test")
+    print("ShadowPM API Test")
     print("=" * 60)
     print(f"\\nMake sure the API is running at {BASE_URL}")
     print("Run: uvicorn main:app --reload")

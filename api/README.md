@@ -1,4 +1,4 @@
-# Granola Meetings API
+# ShadowPM API
 
 A simple FastAPI application for ingesting and storing Granola meeting webhooks in Azure Cosmos DB.
 
@@ -20,7 +20,7 @@ Returns the health status of the API.
 ```json
 {
   "status": "healthy",
-  "service": "granola-meetings-api"
+  "service": "shadowpm-api"
 }
 ```
 
@@ -90,7 +90,7 @@ Create a `.env` file in the `api` directory:
 
 ```env
 COSMOS_CONNECTION_STRING=your_cosmos_connection_string_here
-COSMOS_DATABASE_NAME=granola-db
+COSMOS_DATABASE_NAME=shadowpm-db
 DEBUG=false
 ```
 
@@ -124,25 +124,25 @@ DEBUG=false
 1. **Build the Docker image**
    ```bash
    cd api
-   docker build -t granola-meetings-api .
+   docker build -t shadowpm-api .
    ```
 
 2. **Run the container**
    ```bash
    docker run -d \
-     --name granola-api \
+     --name shadowpm-api \
      -p 8000:8000 \
      --env-file .env \
-     granola-meetings-api
+     shadowpm-api
    ```
    
    Or run interactively (see logs):
    ```bash
    docker run -it \
-     --name granola-api \
+     --name shadowpm-api \
      -p 8000:8000 \
      --env-file .env \
-     granola-meetings-api
+     shadowpm-api
    ```
 
 3. **Access the API**
@@ -153,16 +153,16 @@ DEBUG=false
 4. **Manage the container**
    ```bash
    # View logs
-   docker logs granola-api
+   docker logs shadowpm-api
    
    # Stop the container
-   docker stop granola-api
+   docker stop shadowpm-api
    
    # Start the container
-   docker start granola-api
+   docker start shadowpm-api
    
    # Remove the container
-   docker rm granola-api
+   docker rm shadowpm-api
    ```
 
 ### Testing the API
@@ -193,7 +193,7 @@ api/
 ## Cosmos DB Setup
 
 The API automatically creates:
-- Database: `granola-db` (configurable via `COSMOS_DATABASE_NAME`)
+- Database: `shadowpm-db` (configurable via `COSMOS_DATABASE_NAME`)
 - Container: `meetings` with partition key `/id`
 
 No manual setup required - containers are created on first run if they don't exist.
